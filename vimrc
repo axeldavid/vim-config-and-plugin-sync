@@ -53,7 +53,7 @@ set tags=tags;/
 set list
 set listchars=trail:⋅,nbsp:⋅,tab:▷⋅
 set background=dark " Sjá readme f. litaþema solarized. Fyrir ljóst þema notið background=light
-colorscheme solarized " litaþema sjá :h colorscheme
+colorscheme koehler
 let &guicursor = &guicursor . ",a:blinkon0"	"Slökkvum á blikkandi bendli
 " Show the current command in the lower right corner
 set showcmd
@@ -98,6 +98,7 @@ nnoremap <leader>d :NERDTreeToggle<cr>	"Nota d sem flýtilykil
 let NERDChristmasTree = 1               " Virkja liti í NERDTree
 let NERDTreeHighlightCursorline = 1     " Lýsa upp bendil
 let NERDTreeMapActivateNode='<CR>'      " Virkja Enter/Return til að opna greinar
+let NERDTreeIgnore=['\.pyc$', '\$py\.class$']
 
 """"""""""""""""""""""
 " Stillingar fyrir kóðaaðstoð (code completion) - omnicomplete.
@@ -110,4 +111,38 @@ autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete
 
-" let Tlist_Ctags_Cmd = '/usr/local/bin/jsctags'
+let Tlist_Ctags_Cmd = '/usr/local/bin/jsctags'
+"
+" Indentation
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" Lilypond
+set runtimepath+=/usr/share/lilypond/2.14.2/vim/
+
+" Gundo
+nnoremap <F5> :GundoToggle<CR>
+
+" Hotkeys from andri
+imap jj <Esc>
+imap jk <Esc>
+noremap ss :w<CR>
+noremap qq :q<CR> 
+set pastetoggle=<F2>
+
+" Persistent undo
+try
+  set undodir=~/.vim/undodir
+  set undofile
+  set undolevels=1000 " maximum number of changes that can be undone
+  set undoreload=10000 " maximum number lines to save for undo on a buffer reload
+catch
+endtry
+
+" No codefolding by default
+set foldlevel=1
+
+" Open ctag definition in a vertical split
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
