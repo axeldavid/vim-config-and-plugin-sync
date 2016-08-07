@@ -1,59 +1,54 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" Höfundur: Samúel Jón Gunnarsson
-" Lýsing: vim resource skrá aka vimrc
-"
-" Samsuða af stillingum meðal annars frá:
-" Gavim - Gaveen's Vim Configuration: http://gaveen.owain.org/2009/07/my-vim-configuration.html
-" Amix the luky stiff: http://amix.dk/blog/post/19486#The-ultimate-vim-configuration-vimrc
-" vimcasts.org: http://vimcasts.org
-"
-" Eftirfarandi viðbætur hefur mér þótt ágætt að nota í gegnum tíðina:
-" NERDTree: https://github.com/scrooloose/nerdtree.git
-" SnipMate: https://github.com/msanders/snipmate.vim/tree
-" VimRails: http://github.com/tpope/vim-rails
-" Fugitive: http://github.com/tpope/vim-fugitive
-"
-" Það fyrsta sem við viljum kalla á er pathogen til að hlaða inn
-" viðbótum :
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
-" lesa inn staðbundnar vimrc stillingar ef þær finnast 
-if filereadable(".vimrc.local")
-  source .vimrc.local
-endif
-" Kannar hvort stýrikerfisumhverfi sé stillt í unicode og stillir
-" fileencodings í samræmi við það sjá :h v:lang og :h fileencodings
-if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
-   set fileencodings=ucs-bom,utf-8,latin1
-endif
-""""""""""""""""""""""""""""""""""""""""""""""""
-" Grunnstillingar
-" Ef þú vilt skoða nánari útlistun á hvað hver
-" stilling gerir þá er hægt að lesa um þær í 
-" skipana ham sbr. :h nocompatible mun sýna
-" þér hjálpina um nocompatilbe og hvað hún gerir
-""""""""""""""""""""""""""""""""""""""""""""""""
-set nocompatible        " Nota sjálfgefin gildi frá vim í stað þess að vera samhæfður við vi.
-set number              " Birta línunúmer
-set ruler               " Sýna ávallt staðsetningu __cursor
-set title               " Birta titil
-set smarttab            " Virkja smarttab fídus 
-set incsearch           " Virkja incremental search sem leitar í skjali meðan á innslætti stendur.
-set wildmenu		" Aðstoð við að ljúka við orð (completion)
-	set t_Co=256    " terminal styður 256 liti
-" Virkja liti skv. setningarfræði þegar terminal getur sýnt liti
-" ásamt því að lýsa upp síðustu leitarskilyrði
-if &t_Co > 2 || has("gui_running")
-  syntax on
-  set hlsearch
-endif
-set tags=tags;/
+"""""""""""""""""""""""""""""""""""
+" Based on config from samueljon
+"""""""""""""""""""""""""""""""""""
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+Plugin 'gmarik/vundle'
+Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-dispatch'
+Plugin 'tpope/vim-fugitive'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
+Plugin 'janko-m/vim-test'
+Plugin 'sjl/gundo.vim'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'tpope/vim-surround'
+Plugin 'rstacruz/sparkup'
+Plugin 'ervandew/supertab'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'mlaursen/vim-react-snippets'
+Plugin 'jiangmiao/auto-pairs'
+
+" Base config
+set fileencodings=ucs-bom,utf-8,latin1
+set nocompatible
+set number
+set relativenumber
+set ruler
+set title
+set smarttab
+set incsearch
+set wildmenu
+let g:solarized_termcolors=256
+set t_Co=256
+
+syntax on
+set hlsearch
 
 " Birta tákn fyrir línubil, nbsp og tab
 set list
 set listchars=trail:⋅,nbsp:⋅,tab:▷⋅
-set background=dark " Sjá readme f. litaþema solarized. Fyrir ljóst þema notið background=light
-colorscheme koehler
+set background=dark
+colorscheme solarized
 let &guicursor = &guicursor . ",a:blinkon0"	"Slökkvum á blikkandi bendli
 " Show the current command in the lower right corner
 set showcmd
@@ -64,60 +59,58 @@ augroup indent_settings
     au BufEnter *.html setl autoindent smartindent
 augroup END
 
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" Skráarumsýsla og setningarfræði skráa 
-" (files and syntax highlighting)
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" Stilla samanbrot á kóða eftir setningarfræði tungumáls en bíðum með
-" að virkja nema með zi, zr, zR ofl. samanbrotsskipunum. 
+" Code folding
 setlocal foldmethod=syntax
 setlocal nofoldenable
+filetype off
 filetype indent on
 filetype plugin on
-"for Syntastic
+
+" Syntastic
 let g:syntastic_enable_signs=1
-let g:syntastic_quiet_warnings=1
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" Sérsniðnir flýtilyklar
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" Stilla svokallaðan leader lykil en hann er notaður
-" til að ræsa viðbætur og aðra sérvirkni
-" Dæmi ef jsbeautyfier er uppsett þá er hægt að 
-" ræsa hann mv. neðangreint með ,ff 
+
+" Set comma as leader
 let mapleader = ","
-" Héreftir er hægt að nota <leader> sem tilvísun í , sem leader.
-" Músaraðgerðir
-nnoremap <2-LeftMouse> <C-]> "Leyfir tvíklikk sem hoppar í taglist-a
-nnoremap <MiddleMouse> <C-T> "Hoppar tilbaka úr taglista
-set mouse=a 
+
+" Mouse actions
+nnoremap <2-LeftMouse> <C-]> " Double click to jump to definition
+nnoremap <MiddleMouse> <C-T> " Middle click to jump back
+set mouse=a
+
 """"""""""""""""""""""
-" NERDTree Stillingar
+" NERDTree
 """"""""""""""""""""""
 nnoremap <leader>d :NERDTreeToggle<cr>	"Nota d sem flýtilykil
+nnoremap <leader>D :NERDTree<CR><C-w>p:NERDTreeFind<CR>
 
 let NERDChristmasTree = 1               " Virkja liti í NERDTree
 let NERDTreeHighlightCursorline = 1     " Lýsa upp bendil
 let NERDTreeMapActivateNode='<CR>'      " Virkja Enter/Return til að opna greinar
-let NERDTreeIgnore=['\.pyc$', '\$py\.class$']
-
-""""""""""""""""""""""
-" Stillingar fyrir kóðaaðstoð (code completion) - omnicomplete.
-""""""""""""""""""""""
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd FileType c set omnifunc=ccomplete#Complete
 
 let Tlist_Ctags_Cmd = '/usr/local/bin/jsctags'
-"
+
+let g:airline_enable_syntastice=1
+let g:airline_enable_fugutive=1
+let g:airline#extensions#tabline#enabled = 1
+
+
+set guifont=Inconsolata\ for\ Powerline:h15
+let g:Powerline_symbols = 'fancy'
+set encoding=utf-8
+set fillchars+=stl:\ ,stlnc:\
+set term=xterm-256color
+set termencoding=utf-8
+set laststatus=2
+
+setlocal spell spelllang=en
+
 " Indentation
+set autoindent
 set smartindent
 set tabstop=4
 set shiftwidth=4
 set expandtab
+
 
 " Lilypond
 set runtimepath+=/usr/share/lilypond/2.14.2/vim/
@@ -126,7 +119,6 @@ set runtimepath+=/usr/share/lilypond/2.14.2/vim/
 nnoremap <F5> :GundoToggle<CR>
 
 " Hotkeys from andri
-imap jj <Esc>
 imap jk <Esc>
 noremap ss :w<CR>
 noremap qq :q<CR> 
@@ -144,5 +136,52 @@ endtry
 " No codefolding by default
 set foldlevel=1
 
-" Open ctag definition in a vertical split
-map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+" Allow JSX in javascript
+let g:jsx_ext_required = 0
+
+" Configure Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_javascript_checkers = ['eslint']
+
+" vim tests
+let test#strategy = 'dispatch'
+nmap <leader>t :TestNearest<CR>
+nmap <leader>T :TestFile<CR>
+nmap <leader>a :TestSuite<CR>
+nmap <leader>l :TestLast<CR>
+nmap <leader>g :TestVisit<CR>
+
+" Easymotion
+map <Leader> <Plug>(easymotion-prefix)
+
+" CtrlP
+let g:ctrlp_custom_ignore = {
+    \ 'dir': '\v[\/](\.git|node_modules|logs|amps-standalone|venv|test-reports)$',
+    \ 'file': '\v\.(sqlite3|swo|swp|pyc)$',
+    \ }
+
+" The following is to resolve conflicts between ultisnip and YCM
+" http://stackoverflow.com/questions/14896327/ultisnips-and-youcompleteme
+
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" YouCompleteMe Close preview window automatically
+autocmd CompleteDone * pclose
+
+set exrc
+set secure
